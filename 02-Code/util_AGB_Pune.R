@@ -234,3 +234,67 @@ clc <- function(){cat("\014")}
   }
   return(paste0(path, file ))
 }
+
+# Calculating various AGB summary using agbSummary() ----------------------------------------------------
+# Function to calculate a detailed summary by ward or species.
+agbSummary <- function(df, group_by = "ward", col.dbh = "dbh", col.height = "height_m") {
+  out <- df %>% group_by(!!!syms(group_by)) %>%
+    mutate(dbh.min = min(c_across(all_of(col.dbh)), na.rm = TRUE),
+           dbh.q.025 = quantile(c_across(all_of(col.dbh)), na.rm = TRUE, probs = .025),
+           dbh.q.25 = quantile(c_across(all_of(col.dbh)), na.rm = TRUE, probs = .25),
+           dbh.median = median(c_across(all_of(col.dbh)), na.rm = TRUE),
+           dbh.q.75 = quantile(c_across(all_of(col.dbh)), na.rm = TRUE, probs = .25),
+           dbh.q.975 = quantile(c_across(all_of(col.dbh)), na.rm = TRUE, probs = .975),
+           dbh.max = max(c_across(all_of(col.dbh)), na.rm = TRUE),
+           dbh.mean = mean(c_across(all_of(col.dbh)), na.rm = TRUE),
+           dbh.sd = sd(c_across(all_of(col.dbh)), na.rm = TRUE),
+           dbh.n = sum(!is.na(c_across(all_of(col.dbh)))),
+           dbh.cv = dbh.sd*100/dbh.mean,
+           dbh.se = dbh.sd/sqrt(dbh.n),
+           H.min = min(c_across(all_of(col.height)), na.rm = TRUE),
+           H.q.025 = quantile(c_across(all_of(col.height)), na.rm = TRUE, probs = .025),
+           H.q.25 = quantile(c_across(all_of(col.height)), na.rm = TRUE, probs = .25),
+           H.median = median(c_across(all_of(col.height)), na.rm = TRUE),
+           H.q.75 = quantile(c_across(all_of(col.height)), na.rm = TRUE, probs = .25),
+           H.q.975 = quantile(c_across(all_of(col.height)), na.rm = TRUE, probs = .975),
+           H.max = max(c_across(all_of(col.height)), na.rm = TRUE),
+           H.mean = mean(c_across(all_of(col.height)), na.rm = TRUE),
+           H.sd = sd(c_across(all_of(col.height)), na.rm = TRUE),
+           H.n = sum(!is.na(c_across(all_of(col.height)))),
+           H.cv = H.sd*100/H.mean,
+           H.se = H.sd/sqrt(H.n),
+           wd.min = min(wd.mean, na.rm = TRUE),
+           wd.q.025 = quantile(wd.mean, na.rm = TRUE, probs = .025),
+           wd.q.25 = quantile(wd.mean, na.rm = TRUE, probs = .25),
+           wd.median = median(wd.mean, na.rm = TRUE),
+           wd.q.75 = quantile(wd.mean, na.rm = TRUE, probs = .25),
+           wd.q.975 = quantile(wd.mean, na.rm = TRUE, probs = .975),
+           wd.max = max(wd.mean, na.rm = TRUE),
+           wd.mean = mean(wd.mean, na.rm = TRUE),
+           wd.sd = sd(wd.mean, na.rm = TRUE),
+           wd.n = sum(!is.na(wd.mean)),
+           wd.cv = wd.sd*100/wd.mean,
+           wd.se = wd.sd/sqrt(wd.n)) %>%
+    group_by(dbh.min, dbh.min, dbh.q.025, dbh.q.25, dbh.median, dbh.q.75, dbh.q.975, dbh.max, dbh.mean, dbh.sd, dbh.n, dbh.cv, dbh.se,
+             H.min, H.min, H.q.025, H.q.25, H.median, H.q.75, H.q.975, H.max, H.mean, H.sd, H.n, H.cv, H.se,
+             wd.min, wd.min, wd.q.025, wd.q.25, wd.median, wd.q.75, wd.q.975, wd.max, wd.mean, wd.sd, wd.n, wd.cv, wd.se,
+             .add = TRUE) %>%
+    summarise_at(vars(starts_with("simu.")), sum, na.rm = TRUE) %>%
+    rowwise() %>%
+    mutate(agb.min = min(c_across(starts_with("simu.")), na.rm = TRUE),
+           agb.q.025 = quantile(c_across(starts_with("simu.")), na.rm = TRUE, probs = .025),
+           agb.q.25 = quantile(c_across(starts_with("simu.")), na.rm = TRUE, probs = .25),
+           agb.median = median(c_across(starts_with("simu.")), na.rm = TRUE),
+           agb.q.75 = quantile(c_across(starts_with("simu.")), na.rm = TRUE, probs = .25),
+           agb.q.975 = quantile(c_across(starts_with("simu.")), na.rm = TRUE, probs = .975),
+           agb.max = max(c_across(starts_with("simu.")), na.rm = TRUE),
+           agb.mean = mean(c_across(starts_with("simu.")), na.rm = TRUE),
+           agb.sd = sd(c_across(starts_with("simu.")), na.rm = TRUE),
+           agb.n = sum(!is.na(c_across(starts_with("simu."))))) %>%
+    select(-starts_with("simu.")) %>%
+    ungroup() %>%
+    mutate(agb.cv = agb.sd*100/agb.mean,
+           agb.se = agb.sd/sqrt(agb.n))
+  return(out)  
+}
+
