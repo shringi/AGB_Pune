@@ -18,10 +18,14 @@ commit](https://img.shields.io/github/last-commit/shringi/AGB_Pune)
 
 # Motivation
 
+![alt
+text](https://github.com/shringi/AGB_Pune/blob/master/Pune_Tree_Distribution_300dpi.jpg?raw=true)
+
 Pune Municipal Corporation conducted a tree census measuring \~40 lacs
-trees. This repository attempts to estimate the Above-ground Biomass of
-the trees. This repository contains the code for the purpose of making
-it completely open source and reproducible.
+trees (displayed in red in the image above). This repository attempts to
+estimate the Above-ground Biomass of the trees. This repository contains
+the code for the purpose of making it completely open source and
+reproducible.
 
 # Installation
 
@@ -58,7 +62,7 @@ it completely open source and reproducible.
 
 ## **util\_AGB\_Pune.R**
 
--   Contains custom made functions used in other R-
+-   Contains custom made functions used in other R-scripts.
 
 # Resources
 
